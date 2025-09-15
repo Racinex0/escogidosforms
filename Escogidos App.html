@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- Esta etiqueta META es la clave para la compatibilidad con todos los móviles (iOS y Android). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESCOGIDOS</title>
+    <!-- Script para el efecto de confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Estilos CSS integrados para la presentación -->
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --secondary-color: #6c757d;
+            --secondary-hover: #5a6268;
+            --background-color: #f0f2f5;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --label-color: #555;
+            --border-color: #ccc;
+        }
+        /* --- INICIO ESTILOS DE FONDO SOLICITADOS --- */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(
+                135deg,
+                #ffe8f3,
+                #d9f3ff
+            ); /* Soft pastel gradient background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: Tahoma, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 1rem 0;
+            box-sizing: border-box;
+            position: relative;
+        }
+        body::before,
+        body::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                #ff9aa2, /* Soft pink */ 
+                #ffb7b2, /* Light peach */ 
+                #ffdac1, /* Pastel yellow */ 
+                #e2f0cb, /* Mint green */ 
+                #a2e4ff, /* Baby blue */ 
+                #c9afff, /* Lavender */ 
+                #ffb7b2,
+                #ff9aa2
+            );
+            transform: translate(-50%, -50%);
+            animation: rotate 8s linear infinite;
+            filter: blur(50px); /* Create a soft glowing effect */
+            opacity: 0.8;
+            z-index: 1;
+        }
+        body::after {
+            width: 180%;
+            height: 180%;
+            animation: rotate-reverse 10s linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes rotate-reverse {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+        /* --- FIN ESTILOS DE FONDO SOLICITADOS --- */
+
+        .container {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 420px;
+            width: 95%;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2; /* Asegura que el contenedor esté sobre el fondo animado */
+        }
+        .hidden {
+            display: none;
+        }
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        .welcome-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .btn, .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-sizing: border-box;
+        }
+        .btn:active, .btn-primary:active, .btn-secondary:active {
+            transform: scale(0.98);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover);
+        }
+        
+        #checkBtn {
+            background-color: #28a745;
+            color: white;
+        }
+        #checkBtn:hover {
+            background-color: #218838;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--label-color);
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        
+        /* --- INICIO ESTILOS CHECKBOX SOLICITADOS --- */
+        .checkbox-options-group {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 0;
+            height: 40px; /* Altura para alinear visualmente */
+        }
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .checkbox-wrapper-12 {
+            position: relative;
+            height: 24px;
+        }
+        .checkbox-wrapper-12 > svg {
+            position: absolute;
+            top: -130%;
+            left: -170%;
+            width: 110px;
+            pointer-events: none;
+        }
+        .checkbox-wrapper-12 * {
+            box-sizing: border-box;
+        }
+        .checkbox-wrapper-12 input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            margin: 0;
+        }
+        .checkbox-wrapper-12 input[type="checkbox"]:focus {
+            outline: 0;
+        }
+        .checkbox-wrapper-12 .cbx {
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+        .checkbox-wrapper-12 .cbx input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #bfbfc0;
+            border-radius: 50%;
+        }
+        .checkbox-wrapper-12 .cbx label {
+            width: 24px;
+            height: 24px;
+            background: none;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: trasnlate3d(0, 0, 0);
+            pointer-events: none;
+        }
+        .checkbox-wrapper-12 .cbx svg {
+            position: absolute;
+            top: 5px;
+            left: 4px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .checkbox-wrapper-12 .cbx svg path {
+            stroke: #fff;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 19;
+            stroke-dashoffset: 19;
+            transition: stroke-dashoffset 0.3s ease;
+            transition-delay: 0.2s;
+        }
+        .checkbox-wrapper-12 .cbx input:checked + label {
+            animation: splash-12 0.6s ease forwards;
+        }
+        .checkbox-wrapper-12 .cbx input:checked + label + svg path {
+            stroke-dashoffset: 0;
+        }
+        @keyframes splash-12 {
+            40% {
+                background: #866efb;
+                box-shadow: 0 -18px 0 -8px #866efb, 16px -8px 0 -8px #866efb, 16px 8px 0 -8px #866efb, 0 18px 0 -8px #866efb, -16px 8px 0 -8px #866efb, -16px -8px 0 -8px #866efb;
+            }
+            100% {
+                background: #866efb;
+                box-shadow: 0 -36px 0 -10px transparent, 32px -16px 0 -10px transparent, 32px 16px 0 -10px transparent, 0 36px 0 -10px transparent, -32px 16px 0 -10px transparent, -32px -16px 0 -10px transparent;
+            }
+        }
+        /* --- FIN ESTILOS CHECKBOX SOLICITADOS --- */
+
+        .phone-group, .date-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .phone-group select {
+            width: auto;
+            flex-basis: 35%;
+        }
+        .phone-group input {
+            flex-basis: 65%;
+        }
+        .form-actions {
+            margin-top: 2rem;
+        }
+        .loader {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: var(--text-color);
+        }
+        
+        .na-btn {
+            display: block;
+            width: 100%;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 0.6rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .status-message { padding: 2rem 0; }
+        .status-icon { font-size: 4rem; display: block; margin-bottom: 1rem; }
+        .status-title { font-size: 2rem; margin-bottom: 1rem; }
+        .status-detail { font-size: 1.1rem; color: #555; margin-bottom: 2rem; line-height: 1.5; }
+        
+        #langToggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #f0f0f0; 
+            border: 1px solid #ddd;
+            color: #555;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 100;
+        }
+        .confirmation-details {
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: 1px solid #eee;
+        }
+        .confirmation-details p {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.75rem;
+            margin: 0 0 0.75rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .confirmation-details p:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .confirmation-details strong {
+            color: var(--text-color);
+            margin-right: 1rem;
+        }
+        .confirmation-details span {
+            color: #555;
+            word-break: break-all;
+        }
+        .confirmation-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        @media (min-width: 480px) {
+            .confirmation-actions {
+                flex-direction: row;
+            }
+        }
+        
+        .back-button-styled {
+            all: unset;
+            box-sizing: border-box; 
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: inline-flex;
+            height: 3rem;
+            width: 3rem; 
+            align-items: center;
+            justify-content: center; 
+            border-radius: 9999px;
+            font-family: Segoe UI, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 640;
+            color: #1d1d1f;
+            z-index: 10;
+        }
+        .back-button-styled .button-bg {
+            border-color: rgba(255, 208, 116);
+            background-color: rgba(255, 208, 116);
+        }
+        .back-button-styled .button-inner,
+        .back-button-styled .button-inner-hover,
+        .back-button-styled .button-inner-static {
+            pointer-events: none;
+            display: block;
+        }
+        .back-button-styled .button-inner { position: relative; }
+        .back-button-styled .button-inner-hover { position: absolute; top: 0; left: 0; opacity: 0; transform: translateY(70%); }
+        .back-button-styled .button-bg { overflow: hidden; border-radius: 2rem; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scale(1); transition: transform 1.8s cubic-bezier(0.19, 1, 0.22, 1); }
+        .back-button-styled .button-bg,
+        .back-button-styled .button-bg-layer,
+        .back-button-styled .button-bg-layers { display: block; }
+        .back-button-styled .button-bg-layers { position: absolute; left: 50%; transform: translate(-50%); top: -60%; aspect-ratio: 1 / 1; width: max(200%, 10rem); }
+        .back-button-styled .button-bg-layer { border-radius: 9999px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scale(0); }
+        .back-button-styled .button-bg-layer.-purple { background-color: rgba(163, 116, 255); }
+        .back-button-styled .button-bg-layer.-turquoise { background-color: rgba(23, 241, 209); }
+        .back-button-styled .button-bg-layer.-yellow { --tw-bg-opacity: 1; background-color: rgba(255, 208, 116, var(--tw-bg-opacity)); }
+        .back-button-styled:hover .button-inner-static { opacity: 0; transform: translateY(-70%); transition: transform 1.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s linear; }
+        .back-button-styled:hover .button-inner-hover { opacity: 1; transform: translateY(0); transition: transform 1.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 1.4s cubic-bezier(0.19, 1, 0.22, 1); }
+        .back-button-styled:hover .button-bg-layer { transition: transform 1.3s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s linear; }
+        .back-button-styled:hover .button-bg-layer-1 { transform: scale(1); }
+        .back-button-styled:hover .button-bg-layer-2 { transition-delay: 0.1s; transform: scale(1); }
+        .back-button-styled:hover .button-bg-layer-3 { transition-delay: 0.2s; transform: scale(1); }
+
+        .uiverse-yes {
+            --duration: 7s; --easing: linear; 
+            --c-color-1: rgba(245, 160, 2, 0.7);     
+            --c-color-2: #1a23ff;                     
+            --c-color-3: #e21bda;                     
+            --c-color-4: rgba(245, 120, 2, 0.7);     
+            --c-shadow: rgba(245, 124, 2, 0.5);      
+            --c-shadow-inset-top: rgba(245, 124, 2, 0.9); 
+            --c-shadow-inset-bottom: rgba(245, 170, 100, 0.8);
+            --c-radial-inner: #F57C02;                
+            --c-radial-outer: #F5A602;                
+            --c-color: #fff;                          
+            -webkit-tap-highlight-color: transparent; -webkit-appearance: none; outline: none; position: relative; cursor: pointer; border: none; display: table; border-radius: 24px; padding: 0; margin: 0; text-align: center; font-weight: 600; font-size: 16px; letter-spacing: 0.02em; line-height: 1.5; color: var(--c-color); background: radial-gradient( circle, var(--c-radial-inner), var(--c-radial-outer) 80% ); box-shadow: 0 0 14px var(--c-shadow);
+            width: 100%;
+        }
+        .uiverse-yes:before { content: ""; pointer-events: none; position: absolute; z-index: 3; left: 0; top: 0; right: 0; bottom: 0; border-radius: 24px; box-shadow: inset 0 3px 12px var(--c-shadow-inset-top), inset 0 -3px 4px var(--c-shadow-inset-bottom); }
+        .uiverse-yes .wrapper { -webkit-mask-image: -webkit-radial-gradient(white, black); overflow: hidden; border-radius: 24px; min-width: 132px; padding: 12px 0; }
+        .uiverse-yes .wrapper span { display: inline-block; position: relative; z-index: 1; }
+        .uiverse-yes:hover { --duration: 1400ms; }
+        .uiverse-yes .wrapper .circle { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; filter: blur(var(--blur, 8px)); background: var(--background, transparent); transform: translate(var(--x, 0), var(--y, 0)) translateZ(0); animation: var(--animation, none) var(--duration) var(--easing) infinite; }
+        .uiverse-yes .wrapper .circle.circle-1, .uiverse-yes .wrapper .circle.circle-9, .uiverse-yes .wrapper .circle.circle-10 { --background: var(--c-color-4); }
+        .uiverse-yes .wrapper .circle.circle-3, .uiverse-yes .wrapper .circle.circle-4 { --background: var(--c-color-2); --blur: 14px; }
+        .uiverse-yes .wrapper .circle.circle-5, .uiverse-yes .wrapper .circle.circle-6 { --background: var(--c-color-3); --blur: 16px; }
+        .uiverse-yes .wrapper .circle.circle-2, .uiverse-yes .wrapper .circle.circle-7, .uiverse-yes .wrapper .circle.circle-8, .uiverse-yes .wrapper .circle.circle-11, .uiverse-yes .wrapper .circle.circle-12 { --background: var(--c-color-1); --blur: 12px; }
+        .uiverse-yes .wrapper .circle.circle-1 { --x: 0; --y: -40px; --animation: circle-1; }
+        .uiverse-yes .wrapper .circle.circle-2 { --x: 92px; --y: 8px; --animation: circle-2; }
+        .uiverse-yes .wrapper .circle.circle-3 { --x: -12px; --y: -12px; --animation: circle-3; }
+        .uiverse-yes .wrapper .circle.circle-4 { --x: 80px; --y: -12px; --animation: circle-4; }
+        .uiverse-yes .wrapper .circle.circle-5 { --x: 12px; --y: -4px; --animation: circle-5; }
+        .uiverse-yes .wrapper .circle.circle-6 { --x: 56px; --y: 16px; --animation: circle-6; }
+        .uiverse-yes .wrapper .circle.circle-7 { --x: 8px; --y: 28px; --animation: circle-7; }
+        .uiverse-yes .wrapper .circle.circle-8 { --x: 28px; --y: -4px; --animation: circle-8; }
+        .uiverse-yes .wrapper .circle.circle-9 { --x: 20px; --y: -12px; --animation: circle-9; }
+        .uiverse-yes .wrapper .circle.circle-10 { --x: 64px; --y: 16px; --animation: circle-10; }
+        .uiverse-yes .wrapper .circle.circle-11 { --x: 4px; --y: 4px; --animation: circle-11; }
+        .uiverse-yes .wrapper .circle.circle-12 { --blur: 14px; --x: 52px; --y: 4px; --animation: circle-12; }
+
+        .uiverse-no {
+            --duration: 7s; --easing: linear; --c-color-1: #ffd58c; --c-color-2: #69a5ff; --c-color-3: #c29fff; --c-color-4: rgba(140, 232, 255, 0.7); --c-shadow: rgba(99, 85, 255, 0.59); --c-shadow-inset-top: rgba(132, 156, 255, 0.9); --c-shadow-inset-bottom: rgba(62, 145, 255, 0.614); --c-radial-inner: #2637a4; --c-radial-outer: #5f64ea; --c-color: #ffffff;
+            -webkit-tap-highlight-color: transparent; -webkit-appearance: none; outline: none; position: relative; cursor: pointer; border: none; display: table; border-radius: 24px; padding: 0; margin: 0; text-align: center; font-weight: 600; font-size: 16px; letter-spacing: 0.05em; line-height: 1.5; color: var(--c-color); background: radial-gradient( circle, var(--c-radial-inner), var(--c-radial-outer) 80% ); box-shadow: 0 0 14px var(--c-shadow);
+            width: 100%;
+        }
+        .uiverse-no:before { content: ""; pointer-events: none; position: absolute; z-index: 3; left: 0; top: 0; right: 0; bottom: 0; border-radius: 28px; box-shadow: inset 0 3px 12px var(--c-shadow-inset-top), inset 0 -3px 4px var(--c-shadow-inset-bottom); }
+        .uiverse-no .wrapper { -webkit-mask-image: -webkit-radial-gradient(white, black); overflow: hidden; border-radius: 26px; min-width: 132px; padding: 12px 0; }
+        .uiverse-no .wrapper span { display: inline-block; position: relative; z-index: 1; }
+        .uiverse-no:hover { --duration: 1400ms; }
+        .uiverse-no .wrapper .circle { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; filter: blur(var(--blur, 8px)); background: var(--background, transparent); transform: translate(var(--x, 0), var(--y, 0)) translateZ(0); animation: var(--animation, none) var(--duration) var(--easing) infinite; }
+        .uiverse-no .wrapper .circle.circle-1, .uiverse-no .wrapper .circle.circle-9, .uiverse-no .wrapper .circle.circle-10 { --background: var(--c-color-4); }
+        .uiverse-no .wrapper .circle.circle-3, .uiverse-no .wrapper .circle.circle-4 { --background: var(--c-color-2); --blur: 14px; }
+        .uiverse-no .wrapper .circle.circle-5, .uiverse-no .wrapper .circle.circle-6 { --background: var(--c-color-3); --blur: 16px; }
+        .uiverse-no .wrapper .circle.circle-2, .uiverse-no .wrapper .circle.circle-7, .uiverse-no .wrapper .circle.circle-8, .uiverse-no .wrapper .circle.circle-11, .uiverse-no .wrapper .circle.circle-12 { --background: var(--c-color-1); --blur: 12px; }
+        .uiverse-no .wrapper .circle.circle-1 { --x: 0; --y: -40px; --animation: circle-1; }
+        .uiverse-no .wrapper .circle.circle-2 { --x: 92px; --y: 8px; --animation: circle-2; }
+        .uiverse-no .wrapper .circle.circle-3 { --x: -12px; --y: -12px; --animation: circle-3; }
+        .uiverse-no .wrapper .circle.circle-4 { --x: 80px; --y: -12px; --animation: circle-4; }
+        .uiverse-no .wrapper .circle.circle-5 { --x: 12px; --y: -4px; --animation: circle-5; }
+        .uiverse-no .wrapper .circle.circle-6 { --x: 56px; --y: 16px; --animation: circle-6; }
+        .uiverse-no .wrapper .circle.circle-7 { --x: 8px; --y: 28px; --animation: circle-7; }
+        .uiverse-no .wrapper .circle.circle-8 { --x: 28px; --y: -4px; --animation: circle-8; }
+        .uiverse-no .wrapper .circle.circle-9 { --x: 20px; --y: -12px; --animation: circle-9; }
+        .uiverse-no .wrapper .circle.circle-10 { --x: 64px; --y: 16px; --animation: circle-10; }
+        .uiverse-no .wrapper .circle.circle-11 { --x: 4px; --y: 4px; --animation: circle-11; }
+        .uiverse-no .wrapper .circle.circle-12 { --blur: 14px; --x: 52px; --y: 4px; --animation: circle-12; }
+
+        @keyframes circle-1 { 33% { transform: translate(0px, 16px) translateZ(0); } 66% { transform: translate(12px, 64px) translateZ(0); } }
+        @keyframes circle-2 { 33% { transform: translate(80px, -10px) translateZ(0); } 66% { transform: translate(72px, -48px) translateZ(0); } }
+        @keyframes circle-3 { 33% { transform: translate(20px, 12px) translateZ(0); } 66% { transform: translate(12px, 4px) translateZ(0); } }
+        @keyframes circle-4 { 33% { transform: translate(76px, -12px) translateZ(0); } 66% { transform: translate(112px, -8px) translateZ(0); } }
+        @keyframes circle-5 { 33% { transform: translate(84px, 28px) translateZ(0); } 66% { transform: translate(40px, -32px) translateZ(0); } }
+        @keyframes circle-6 { 33% { transform: translate(28px, -16px) translateZ(0); } 66% { transform: translate(76px, -56px) translateZ(0); } }
+        @keyframes circle-7 { 33% { transform: translate(8px, 28px) translateZ(0); } 66% { transform: translate(20px, -60px) translateZ(0); } }
+        @keyframes circle-8 { 33% { transform: translate(32px, -4px) translateZ(0); } 66% { transform: translate(56px, -20px) translateZ(0); } }
+        @keyframes circle-9 { 33% { transform: translate(20px, -12px) translateZ(0); } 66% { transform: translate(80px, -8px) translateZ(0); } }
+        @keyframes circle-10 { 33% { transform: translate(68px, 20px) translateZ(0); } 66% { transform: translate(100px, 28px) translateZ(0); } }
+        @keyframes circle-11 { 33% { transform: translate(4px, 4px) translateZ(0); } 66% { transform: translate(68px, 20px) translateZ(0); } }
+        @keyframes circle-12 { 33% { transform: translate(56px, 0px) translateZ(0); } 66% { transform: translate(60px, -32px) translateZ(0); } }
+
+        .loader-svg {
+            width: 6em;
+            height: 6em;
+        }
+        .loader-ring {
+            animation: ringA 2s linear infinite;
+        }
+        .loader-ring-a { stroke: #9708F4; }
+        .loader-ring-b { animation-name: ringB; stroke: #5E14E4; }
+        .loader-ring-c { animation-name: ringC; stroke: #9708F4; }
+        .loader-ring-d { animation-name: ringD; stroke: #5E14E4; }
+        @keyframes ringA { from, 4% { stroke-dasharray: 0 660; stroke-width: 20; stroke-dashoffset: -330; } 12% { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -335; } 32% { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -595; } 40%, 54% { stroke-dasharray: 0 660; stroke-width: 20; stroke-dashoffset: -660; } 62% { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -665; } 82% { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -925; } 90%, to { stroke-dasharray: 0 660; stroke-width: 20; stroke-dashoffset: -990; } }
+        @keyframes ringB { from, 12% { stroke-dasharray: 0 220; stroke-width: 20; stroke-dashoffset: -110; } 20% { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -115; } 40% { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -195; } 48%, 62% { stroke-dasharray: 0 220; stroke-width: 20; stroke-dashoffset: -220; } 70% { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -225; } 90% { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -305; } 98%, to { stroke-dasharray: 0 220; stroke-width: 20; stroke-dashoffset: -330; } }
+        @keyframes ringC { from { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: 0; } 8% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -5; } 28% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -175; } 36%, 58% { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: -220; } 66% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -225; } 86% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -395; } 94%, to { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: -440; } }
+        @keyframes ringD { from, 8% { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: 0; } 16% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -5; } 36% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -175; } 44%, 50% { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: -220; } 58% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -225; } 78% { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -395; } 86%, to { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: -440; } }
+    </style>
+</head>
+<body>
+
+<!-- Pantalla de Bienvenida -->
+<div class="container" id="welcomeScreen">
+    <button id="langToggle">ES</button>
+    <div class="logo">ESCOGIDOS</div>
+    <p class="subtitle" data-translate="welcomeTitle">¿Es tu Primera Vez en ESCOGIDOS? 🤔</p>
+    <div class="welcome-buttons">
+        <button class="uiverse-yes" id="yesBtn">
+            <div class="wrapper">
+                <span data-translate="yesBtnText">😀 Sí, es mi primera vez</span>
+                <div class="circle circle-12"></div><div class="circle circle-11"></div><div class="circle circle-10"></div>
+                <div class="circle circle-9"></div><div class="circle circle-8"></div><div class="circle circle-7"></div>
+                <div class="circle circle-6"></div><div class="circle circle-5"></div><div class="circle circle-4"></div>
+                <div class="circle circle-3"></div><div class="circle circle-2"></div><div class="circle circle-1"></div>
+            </div>
+        </button>
+        <button class="uiverse-no" id="noBtn">
+            <div class="wrapper">
+                <span data-translate="noBtnText">😎 No, ya he venido antes</span>
+                <div class="circle circle-12"></div><div class="circle circle-11"></div><div class="circle circle-10"></div>
+                <div class="circle circle-9"></div><div class="circle circle-8"></div><div class="circle circle-7"></div>
+                <div class="circle circle-6"></div><div class="circle circle-5"></div><div class="circle circle-4"></div>
+                <div class="circle circle-3"></div><div class="circle circle-2"></div><div class="circle circle-1"></div>
+            </div>
+        </button>
+    </div>
+</div>
+
+<!-- Formulario de Registro -->
+<div class="container hidden" id="registrationForm">
+    <button id="langToggle">ES</button>
+    <button class="back-button-styled" id="backFromRegister">
+        <span class="button-bg"><span class="button-bg-layers"><span class="button-bg-layer button-bg-layer-1 -purple"></span><span class="button-bg-layer button-bg-layer-2 -turquoise"></span><span class="button-bg-layer button-bg-layer-3 -yellow"></span></span></span>
+        <span class="button-inner"><span class="button-inner-static">⬅</span><span class="button-inner-hover">⬅</span></span>
+    </button>
+    <div class="logo">ESCOGIDOS</div>
+    <p class="subtitle" data-translate="regSubtitle">¡Bienvenido a la familia ESCOGIDOS! 🤗</p>
+    <form id="regForm">
+        <div class="form-group">
+            <label for="invitedBy" data-translate="labelInvitedBy">👥 Invitado Por</label>
+            <input type="text" id="invitedBy" data-translate-placeholder="placeholderInvitedBy">
+            <button type="button" class="na-btn" id="naBtnInvitedBy" data-translate="naBtn">No aplica</button>
+        </div>
+        <div class="form-group">
+            <label for="fullName" data-translate="labelFullName">🏷️ Nombre y Apellido</label>
+            <input type="text" id="fullName" required data-translate-placeholder="placeholderFullName">
+        </div>
+        <div class="form-group">
+            <label for="gender" data-translate="labelGender">♀️♂️ Género</label>
+            <select id="gender" required>
+                <option value="" data-translate="genderDefault">Selecciona...</option>
+                <option value="M" data-translate="genderM">👨 Masculino</option>
+                <option value="F" data-translate="genderF">👩 Femenino</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="phone" data-translate="labelPhone">📱 Teléfono</label>
+            <div class="phone-group">
+                <select id="countryCode" required></select>
+                <input type="tel" id="phone" required data-translate-placeholder="placeholderPhone">
+            </div>
+            <button type="button" class="na-btn" id="naBtnPhone" data-translate="naBtn">No aplica</button>
+        </div>
+        <div class="form-group">
+            <label for="birthDate" data-translate="labelBirthDate">🎂 Fecha de Nacimiento</label>
+            <div class="date-group">
+                <select id="birthDay" required></select>
+                <select id="birthMonth" required></select>
+                <select id="birthYear" required></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="age" data-translate="labelAge">🔢 Edad</label>
+            <input type="number" id="age" required min="1" max="99" oninput="this.value=this.value.slice(0,2)" data-translate-placeholder="placeholderAge">
+        </div>
+
+        <!-- INICIO: Preguntas adicionales con Checkbox personalizado -->
+        <div class="form-group">
+            <label data-translate="labelJesus">🕊️ ¿Has recibido al Señor Jesús en tu corazón como Señor y Salvador?</label>
+            <div class="checkbox-options-group">
+                <div class="checkbox-option">
+                    <div class="checkbox-wrapper-12">
+                      <div class="cbx">
+                        <input type="checkbox" id="jesus-yes" name="jesus-group">
+                        <label for="jesus-yes"></label>
+                        <svg fill="none" viewBox="0 0 15 14" height="14" width="15"><path d="M2 8.36364L6.23077 12L13 2"></path></svg>
+                      </div>
+                      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><filter id="goo-12-1"><feGaussianBlur result="blur" stdDeviation="4" in="SourceGraphic"></feGaussianBlur><feColorMatrix result="goo-12" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -7" mode="matrix" in="blur"></feColorMatrix><feBlend in2="goo-12" in="SourceGraphic"></feBlend></filter></defs></svg>
+                    </div>
+                    <span data-translate="optionYes">Sí</span>
+                </div>
+                <div class="checkbox-option">
+                    <div class="checkbox-wrapper-12">
+                      <div class="cbx">
+                        <input type="checkbox" id="jesus-no" name="jesus-group">
+                        <label for="jesus-no"></label>
+                        <svg fill="none" viewBox="0 0 15 14" height="14" width="15"><path d="M2 8.36364L6.23077 12L13 2"></path></svg>
+                      </div>
+                      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><filter id="goo-12-2"><feGaussianBlur result="blur" stdDeviation="4" in="SourceGraphic"></feGaussianBlur><feColorMatrix result="goo-12" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -7" mode="matrix" in="blur"></feColorMatrix><feBlend in2="goo-12" in="SourceGraphic"></feBlend></filter></defs></svg>
+                    </div>
+                    <span data-translate="optionNo">No</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group hidden" id="baptismQuestion">
+            <label data-translate="labelBaptism">💧 ¿Te has bautizado en aguas?</label>
+            <div class="checkbox-options-group">
+                 <div class="checkbox-option">
+                    <div class="checkbox-wrapper-12">
+                      <div class="cbx">
+                        <input type="checkbox" id="baptism-yes" name="baptism-group">
+                        <label for="baptism-yes"></label>
+                        <svg fill="none" viewBox="0 0 15 14" height="14" width="15"><path d="M2 8.36364L6.23077 12L13 2"></path></svg>
+                      </div>
+                      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><filter id="goo-12-3"><feGaussianBlur result="blur" stdDeviation="4" in="SourceGraphic"></feGaussianBlur><feColorMatrix result="goo-12" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -7" mode="matrix" in="blur"></feColorMatrix><feBlend in2="goo-12" in="SourceGraphic"></feBlend></filter></defs></svg>
+                    </div>
+                    <span data-translate="optionYes">Sí</span>
+                </div>
+                <div class="checkbox-option">
+                    <div class="checkbox-wrapper-12">
+                      <div class="cbx">
+                        <input type="checkbox" id="baptism-no" name="baptism-group">
+                        <label for="baptism-no"></label>
+                        <svg fill="none" viewBox="0 0 15 14" height="14" width="15"><path d="M2 8.36364L6.23077 12L13 2"></path></svg>
+                      </div>
+                      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><filter id="goo-12-4"><feGaussianBlur result="blur" stdDeviation="4" in="SourceGraphic"></feGaussianBlur><feColorMatrix result="goo-12" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -7" mode="matrix" in="blur"></feColorMatrix><feBlend in2="goo-12" in="SourceGraphic"></feBlend></filter></defs></svg>
+                    </div>
+                    <span data-translate="optionNo">No</span>
+                </div>
+            </div>
+        </div>
+        <!-- FIN: Preguntas adicionales -->
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary" id="registerBtn" data-translate="registerBtnText">🚀 ¡Registrarme!</button>
+            <div class="loader" id="registerLoader">
+                <svg viewBox="0 0 240 240" height="240" width="240" class="loader-svg">
+                    <circle stroke-linecap="round" stroke-dashoffset="-330" stroke-dasharray="0 660" stroke-width="20" stroke="#000" fill="none" r="105" cy="120" cx="120" class="loader-ring loader-ring-a"></circle>
+                    <circle stroke-linecap="round" stroke-dashoffset="-110" stroke-dasharray="0 220" stroke-width="20" stroke="#000" fill="none" r="35" cy="120" cx="120" class="loader-ring loader-ring-b"></circle>
+                    <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="85" class="loader-ring loader-ring-c"></circle>
+                    <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="155" class="loader-ring loader-ring-d"></circle>
+                </svg>
+                <span data-translate="registerLoaderText"></span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Formulario de Asistencia -->
+<div class="container hidden" id="attendanceForm">
+    <button id="langToggle">ES</button>
+    <button class="back-button-styled" id="backFromAttendance">
+        <span class="button-bg"><span class="button-bg-layers"><span class="button-bg-layer button-bg-layer-1 -purple"></span><span class="button-bg-layer button-bg-layer-2 -turquoise"></span><span class="button-bg-layer button-bg-layer-3 -yellow"></span></span></span>
+        <span class="button-inner"><span class="button-inner-static">⬅</span><span class="button-inner-hover">⬅</span></span>
+    </button>
+    <div class="logo">ESCOGIDOS</div>
+    <p class="subtitle" data-translate="attSubtitle">¡Qué bueno verte de nuevo! 😊</p>
+    <form id="attForm">
+        <div class="form-group">
+            <label for="fullNameCheck" data-translate="labelFullNameCheck">🏷️ Nombre y Apellido</label>
+            <input type="text" id="fullNameCheck" required data-translate-placeholder="placeholderFullNameCheck">
+        </div>
+        <div class="form-group">
+            <label for="phoneCheck" data-translate="labelPhoneCheck">📱 Tu Número de Teléfono (Opcional)</label>
+            <div class="phone-group">
+                <select id="countryCodeCheck" required></select>
+                <input type="tel" id="phoneCheck" data-translate-placeholder="placeholderPhoneCheck">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-secondary" id="checkBtn" data-translate="checkBtnText">🔍 Verificar Asistencia</button>
+            <div class="loader" id="attendanceLoader">
+                <svg viewBox="0 0 240 240" height="240" width="240" class="loader-svg">
+                    <circle stroke-linecap="round" stroke-dashoffset="-330" stroke-dasharray="0 660" stroke-width="20" stroke="#000" fill="none" r="105" cy="120" cx="120" class="loader-ring loader-ring-a"></circle>
+                    <circle stroke-linecap="round" stroke-dashoffset="-110" stroke-dasharray="0 220" stroke-width="20" stroke="#000" fill="none" r="35" cy="120" cx="120" class="loader-ring loader-ring-b"></circle>
+                    <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="85" class="loader-ring loader-ring-c"></circle>
+                    <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="155" class="loader-ring loader-ring-d"></circle>
+                </svg>
+                <span data-translate="attendanceLoaderText"></span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Pantalla de Confirmación de Datos -->
+<div class="container hidden" id="confirmationScreen">
+    <button id="langToggle">ES</button>
+    <h2 data-translate="confirmTitle">Verifica tu Información</h2>
+    <p class="subtitle" data-translate="confirmSubtitle">¿Están correctos estos datos?</p>
+    <div class="confirmation-details">
+        <p><strong data-translate="labelInvitedBy"></strong> <span id="confirmInvitedBy"></span></p>
+        <p><strong data-translate="labelFullName"></strong> <span id="confirmName"></span></p>
+        <p><strong data-translate="labelGender"></strong> <span id="confirmGender"></span></p>
+        <p><strong data-translate="labelPhone"></strong> <span id="confirmPhone"></span></p>
+        <p><strong data-translate="labelBirthDate"></strong> <span id="confirmBirthDate"></span></p>
+        <p><strong data-translate="labelAge"></strong> <span id="confirmAge"></span></p>
+        <p><strong data-translate="confirmJesus"></strong> <span id="confirmJesus"></span></p>
+        <p id="confirmBaptismRow"><strong data-translate="confirmBaptism"></strong> <span id="confirmBaptism"></span></p>
+    </div>
+    <div class="confirmation-actions">
+        <button class="btn-secondary" id="confirmNoBtn" data-translate="confirmNo">No, corregir</button>
+        <button class="btn-primary" id="confirmYesBtn" data-translate="confirmYes">Sí, registrar</button>
+    </div>
+</div>
+
+<!-- Mensaje de Éxito -->
+<div class="container hidden" id="successMessage">
+    <button id="langToggle">ES</button>
+    <div class="status-message success-message">
+        <span class="status-icon" id="successIcon">🎉</span>
+        <h2 class="status-title" id="successTitle"></h2>
+        <p class="status-detail" id="successDetail"></p>
+        <button class="btn-primary" id="backToWelcome" data-translate="backToWelcomeText">🏠 Volver al Inicio</button>
+    </div>
+</div>
+
+<!-- Mensaje de Error -->
+<div class="container hidden" id="errorMessage">
+    <button id="langToggle">ES</button>
+    <div class="status-message error-message">
+        <span class="status-icon">😔</span>
+        <h2 class="status-title" data-translate="errorTitle">¡Oops!</h2>
+        <p class="status-detail" id="errorDetail"></p>
+        <button class="btn-primary" id="backToWelcomeError" data-translate="backToWelcomeErrorText">🏠 Volver al Inicio</button>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJR8c9GbQ6QB13yuOU6rmUAjevERHNNv40hxQ66mNQiVsmTW1f2aqn1Vh3HIiKyOfLxQ/exec";
+
+    const translations = {
+        es: {
+            welcomeTitle: "¿Es tu Primera Vez en ESCOGIDOS? 🤔",
+            yesBtnText: "😀 Sí, es mi primera vez",
+            noBtnText: "😎 No, ya he venido antes",
+            regSubtitle: "¡Bienvenido a la familia ESCOGIDOS! 🤗",
+            labelInvitedBy: "👥 Invitado Por:",
+            naBtn: "No aplica",
+            labelFullName: "🏷️ Nombre y Apellido:",
+            labelGender: "♀️♂️ Género:",
+            genderDefault: "Selecciona...",
+            genderM: "👨 Masculino",
+            genderF: "👩 Femenino",
+            labelPhone: "📱 Teléfono:",
+            labelBirthDate: "🎂 Fecha de Nacimiento:",
+            labelAge: "🔢 Edad:",
+            labelJesus: "🕊️ ¿Has recibido al Señor Jesús en tu corazón como Señor y Salvador?",
+            optionYes: "Sí",
+            optionNo: "No",
+            labelBaptism: "💧 ¿Te has bautizado en aguas?",
+            registerBtnText: "🚀 ¡Registrarme!",
+            registerLoaderText: "Procesando la Información...",
+            attSubtitle: "¡Qué bueno verte de nuevo! 😊",
+            labelFullNameCheck: "🏷️ Nombre y Apellido:",
+            labelPhoneCheck: "📱 Tu Número de Teléfono (Opcional)",
+            checkBtnText: "🔍 Verificar Asistencia",
+            attendanceLoaderText: "Procesando la Información... ",
+            successTitle: "¡Excelente!",
+            welcomeBackTitle: "¡Qué bueno verte!",
+            errorTitle: "¡Oops!",
+            ageMismatchError: "La edad no coincide con la fecha de nacimiento. Por favor, verifica los datos.",
+            validationError: "Por favor, responde todas las preguntas requeridas.",
+            backToWelcomeText: "🏠 Volver al Inicio",
+            backToWelcomeErrorText: "🏠 Volver al Inicio",
+            registrationSuccess: "¡Bienvenido/a a la familia, {name}! Dios tiene grandes planes para ti ✨",
+            registrationWelcomeBack: "¡Qué alegría verte de nuevo, {name}! Tu asistencia ha sido marcada.",
+            attendanceSuccess: "¡Dios te ama, {name}! Nos alegra verte de nuevo 🤗",
+            attendanceError: "No pudimos encontrar una coincidencia. Por favor, verifica tus datos o regístrate si es tu primera vez.",
+            offlineTitle: "Registro Guardado 💾",
+            offlineDetail: "No tienes conexión a internet. Guardamos tus datos y los enviaremos automáticamente cuando te conectes. ¡Nos vemos!",
+            syncNotification: "Se enviaron tus registros pendientes. ¡Gracias!",
+            placeholderInvitedBy: "¿Quién te invitó?",
+            placeholderFullName: "Tu nombre completo",
+            placeholderPhone: "0000-0000",
+            placeholderAge: "18",
+            placeholderFullNameCheck: "El nombre con el que te registraste",
+            placeholderPhoneCheck: "Opcional, para ser más preciso",
+            confirmTitle: "Verifica tu Información",
+            confirmSubtitle: "¿Están correctos estos datos?",
+            confirmYes: "Sí, registrar",
+            confirmNo: "No, corregir",
+            confirmJesus: "Recibió a Jesús:",
+            confirmBaptism: "Bautizado en aguas:",
+            dateSelects: { day: "Día", month: "Mes", year: "Año" }
+        },
+        en: {
+            welcomeTitle: "Is this your First Time at THE CHOSEN? 🤔",
+            yesBtnText: "😀 Yes, it's my first time",
+            noBtnText: "😎 No, I've been here before",
+            regSubtitle: "Welcome to THE CHOSEN family! 🤗",
+            labelInvitedBy: "👥 Invited By:",
+            naBtn: "N/A",
+            labelFullName: "🏷️ Full Name:",
+            labelGender: "♀️♂️ Gender:",
+            genderDefault: "Select...",
+            genderM: "👨 Male",
+            genderF: "👩 Female",
+            labelPhone: "📱 Phone:",
+            labelBirthDate: "🎂 Date of Birth:",
+            labelAge: "🔢 Age:",
+            labelJesus: "🕊️ Have you received the Lord Jesus in your heart as your Lord and Savior?",
+            optionYes: "Yes",
+            optionNo: "No",
+            labelBaptism: "💧 Have you been baptized in water?",
+            registerBtnText: "🚀 Register Me!",
+            registerLoaderText: "Processing Information...",
+            attSubtitle: "Great to see you again! 😊",
+            labelFullNameCheck: "🏷️ Full Name:",
+            labelPhoneCheck: "📱 Your Phone Number (Optional)",
+            checkBtnText: "🔍 Check Attendance",
+            attendanceLoaderText: "Processing Information...",
+            successTitle: "Excellent!",
+            welcomeBackTitle: "Great to see you!",
+            errorTitle: "Oops!",
+            ageMismatchError: "The age does not match the date of birth. Please check your data.",
+            validationError: "Please answer all required questions.",
+            backToWelcomeText: "🏠 Back to Start",
+            backToWelcomeErrorText: "🏠 Back to Start",
+            registrationSuccess: "Welcome to the family, {name}! God has great plans for you ✨",
+            registrationWelcomeBack: "So glad to see you again, {name}! Your attendance has been marked.",
+            attendanceSuccess: "God loves you, {name}! We're glad to see you again 🤗",
+            attendanceError: "We couldn't find a match. Please check your data or register if it's your first time.",
+            offlineTitle: "Registration Saved 💾",
+            offlineDetail: "You are currently offline. We've saved your data and will send it automatically when you're back online. See you!",
+            syncNotification: "Your pending registrations have been sent. Thank you!",
+            placeholderInvitedBy: "Who invited you?",
+            placeholderFullName: "Your full name",
+            placeholderPhone: "0000-0000",
+            placeholderAge: "18",
+            placeholderFullNameCheck: "The name you registered with",
+            placeholderPhoneCheck: "Optional, for a precise match",
+            confirmTitle: "Verify Your Information",
+            confirmSubtitle: "Is this data correct?",
+            confirmYes: "Yes, register",
+            confirmNo: "No, go back",
+            confirmJesus: "Received Jesus:",
+            confirmBaptism: "Baptized in water:",
+            dateSelects: { day: "Day", month: "Month", year: "Year" }
+        },
+        zh: { // Chino
+            welcomeTitle: "这是您第一次参加「被拣选者」活动吗？ 🤔",
+            yesBtnText: "😀 是的，我是第一次来",
+            noBtnText: "😎 不，我以前来过",
+            regSubtitle: "欢迎来到「被拣选者」大家庭！ 🤗",
+            labelInvitedBy: "👥 邀请人:",
+            labelJesus: "🕊️ 您是否已接受主耶稣基督为您的救主？",
+            labelBaptism: "💧 您是否已受水洗？",
+            confirmJesus: "接受耶稣:",
+            confirmBaptism: "受水洗:",
+            // ... (resto de las traducciones en chino)
+        },
+        pt: { // Portugués
+            welcomeTitle: "É a sua Primeira Vez nos ESCOLHIDOS? 🤔",
+            yesBtnText: "😀 Sim, é a minha primeira vez",
+            noBtnText: "😎 Não, já vim antes",
+            regSubtitle: "Bem-vindo à família ESCOLHIDOS! 🤗",
+            labelInvitedBy: "👥 Convidado Por:",
+            labelJesus: "🕊️ Você já recebeu o Senhor Jesus em seu coração como Senhor e Salvador?",
+            labelBaptism: "💧 Você já foi batizado nas águas?",
+            confirmJesus: "Recebeu Jesus:",
+            confirmBaptism: "Batizado nas águas:",
+            // ... (resto de las traducciones en portugués)
+        },
+        ja: { // Japonés
+            welcomeTitle: "「選ばれし者」へようこそ！初めてですか？ 🤔",
+            yesBtnText: "😀 はい、初めてです",
+            noBtnText: "😎 いいえ、来たことがあります",
+            regSubtitle: "「選ばれし者」ファミリーへようこそ！ 🤗",
+            labelInvitedBy: "👥 紹介者:",
+            labelJesus: "🕊️ 主イエスを心に救い主として受け入れましたか？",
+            labelBaptism: "💧 水のバプテスマを受けましたか？",
+            confirmJesus: "イエスを受け入れた:",
+            confirmBaptism: "バプテスマ:",
+            // ... (resto de las traducciones en japonés)
+        },
+        ko: { // Coreano
+            welcomeTitle: "선택받은 자들 모임에 처음 오셨나요? 🤔",
+            yesBtnText: "😀 네, 처음이에요",
+            noBtnText: "😎 아니요, 와본 적 있어요",
+            regSubtitle: "선택받은 자들 가족이 된 것을 환영합니다! 🤗",
+            labelInvitedBy: "👥 초대한 사람:",
+            labelJesus: "🕊️ 주 예수님을 마음의 구주로 영접하셨습니까?",
+            labelBaptism: "💧 물로 세례를 받으셨습니까?",
+            confirmJesus: "예수님 영접:",
+            confirmBaptism: "세례 여부:",
+            // ... (resto de las traducciones en coreano)
+        },
+        de: { // Alemán
+            welcomeTitle: "Bist du zum ersten Mal bei den AUSERWÄHLTEN? 🤔",
+            yesBtnText: "😀 Ja, ich bin zum ersten Mal hier",
+            noBtnText: "😎 Nein, ich war schon einmal hier",
+            regSubtitle: "Willkommen in der AUSERWÄHLTEN-Familie! 🤗",
+            labelInvitedBy: "👥 Eingeladen von:",
+            labelJesus: "🕊️ Hast du den Herrn Jesus in dein Herz als Herrn und Retter aufgenommen?",
+            labelBaptism: "💧 Bist du im Wasser getauft worden?",
+            confirmJesus: "Jesus angenommen:",
+            confirmBaptism: "Getauft:",
+            // ... (resto de las traducciones en alemán)
+        },
+        ru: { // Ruso
+            welcomeTitle: "Вы впервые на встрече ИЗБРАННЫХ? 🤔",
+            yesBtnText: "😀 Да, я здесь впервые",
+            noBtnText: "😎 Нет, я уже был здесь",
+            regSubtitle: "Добро пожаловать в семью ИЗБРАННЫХ! 🤗",
+            labelInvitedBy: "👥 Приглашен(а) кем:",
+            labelJesus: "🕊️ Приняли ли вы Господа Иисуса в свое сердце как Господа и Спасителя?",
+            labelBaptism: "💧 Вы крещены в воде?",
+            confirmJesus: "Принял Иисуса:",
+            confirmBaptism: "Крещен:",
+            // ... (resto de las traducciones en ruso)
+        }
+    };
+    
+    // Rellenar las traducciones que faltan para brevedad
+    Object.keys(translations).forEach(lang => {
+        if (lang === 'es' || lang === 'en') return;
+        const base = translations.en;
+        const target = translations[lang];
+        for (const key in base) {
+            if (!target[key]) {
+                target[key] = base[key];
+            }
+        }
+    });
+
+    const supportedLangs = ['es', 'en', 'zh', 'pt', 'ja', 'ko', 'de', 'ru'];
+    let currentLangIndex = 0;
+    let currentLang = supportedLangs[currentLangIndex];
+    let pendingRegistrationData = null; 
+    const screens = {
+        welcome: document.getElementById('welcomeScreen'),
+        registration: document.getElementById('registrationForm'),
+        attendance: document.getElementById('attendanceForm'),
+        success: document.getElementById('successMessage'),
+        error: document.getElementById('errorMessage'),
+        confirmation: document.getElementById('confirmationScreen')
+    };
+
+    const countryCodes = [ { name: "Panamá", code: "507", flag: "🇵🇦", format: [4, 4] }, { name: "USA", code: "1", flag: "🇺🇸", format: [3, 3, 4] }, { name: "México", code: "52", flag: "🇲🇽", format: [2, 4, 4] }, { name: "Colombia", code: "57", flag: "🇨🇴", format: [3, 3, 4] }, { name: "España", code: "34", flag: "🇪🇸", format: [3, 3, 3] }, { name: "Argentina", code: "54", flag: "🇦🇷", format: [2, 4, 4] }, { name: "Perú", code: "51", flag: "🇵🇪", format: [3, 3, 3] }, { name: "Venezuela", code: "58", flag: "🇻🇪", format: [3, 7] }, { name: "Chile", code: "56", flag: "🇨🇱", format: [1, 4, 4] }, { name: "Ecuador", code: "593", flag: "🇪🇨", format: [1, 3, 4] }, { name: "Guatemala", code: "502", flag: "🇬🇹", format: [4, 4] }, { name: "Cuba", code: "53", flag: "🇨🇺", format: [1, 3, 4] }, { name: "Bolivia", code: "591", flag: "🇧🇴", format: [1, 7] }, { name: "Honduras", code: "504", flag: "🇭🇳", format: [4, 4] }, { name: "Paraguay", code: "595", flag: "🇵🇾", format: [3, 6] }, { name: "El Salvador", code: "503", flag: "🇸🇻", format: [4, 4] }, { name: "Nicaragua", code: "505", flag: "🇳🇮", format: [4, 4] }, { name: "Costa Rica", code: "506", flag: "🇨🇷", format: [4, 4] }, { name: "Puerto Rico", code: "1939", flag: "🇵🇷", format: [3, 3, 4] }, { name: "Uruguay", code: "598", flag: "🇺🇾", format: [2, 3, 3] }, { name: "Canadá", code: "1", flag: "🇨🇦", format: [3, 3, 4] }, { name: "Brasil", code: "55", flag: "🇧🇷", format: [2, 5, 4] }, { name: "Reino Unido", code: "44", flag: "🇬🇧", format: [4, 6] }, { name: "Francia", code: "33", flag: "🇫🇷", format: [1, 2, 2, 2, 2] }, { name: "Alemania", code: "49", flag: "🇩🇪", format: [3, 7] }, { name: "Italia", code: "39", flag: "🇮🇹", format: [3, 7] }, { name: "Portugal", code: "351", flag: "🇵🇹", format: [3, 3, 3] }, { name: "Japón", code: "81", flag: "🇯🇵", format: [2, 4, 4] }, { name: "China", code: "86", flag: "🇨🇳", format: [3, 4, 4] }, { name: "India", code: "91", flag: "🇮🇳", format: [5, 5] }, { name: "Australia", code: "61", flag: "🇦🇺", format: [1, 4, 4] }, { name: "Rusia", code: "7", flag: "🇷🇺", format: [3, 3, 2, 2] }, { name: "Corea del Sur", code: "82", flag: "🇰🇷", format: [2, 4, 4] }, { name: "Suiza", code: "41", flag: "🇨🇭", format: [2, 3, 2, 2] }, { name: "Suecia", code: "46", flag: "🇸🇪", format: [2, 3, 2, 2] }, { name: "Noruega", code: "47", flag: "🇳🇴", format: [3, 2, 3] }, { name: "Países Bajos", code: "31", flag: "🇳🇱", format: [1, 8] }, { name: "Bélgica", code: "32", flag: "🇧🇪", format: [3, 2, 2, 2] }, { name: "Irlanda", code: "353", flag: "🇮🇪", format: [2, 7] }, { name: "Dinamarca", code: "45", flag: "🇩🇰", format: [2, 2, 2, 2] }, { name: "Finlandia", code: "358", flag: "🇫🇮", format: [2, 7] }, { name: "Austria", code: "43", flag: "🇦🇹", format: [3, 7] }, { name: "Nueva Zelanda", code: "64", flag: "🇳🇿", format: [3, 3, 4] }, { name: "Sudáfrica", code: "27", flag: "🇿🇦", format: [2, 3, 4] }, { name: "Egipto", code: "20", flag: "🇪🇬", format: [3, 4, 4] }, { name: "Turquía", code: "90", flag: "🇹🇷", format: [3, 3, 4] }, { name: "Israel", code: "972", flag: "🇮🇱", format: [2, 3, 4] }, { name: "Singapur", code: "65", flag: "🇸🇬", format: [4, 4] }, { name: "Rep. Dominicana", code: "1809", flag: "🇩🇴", format: [3, 3, 4] } ];
+    
+    function populateCountryCodes(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        select.innerHTML = '';
+        countryCodes.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.code;
+            option.textContent = `${country.flag} +${country.code}`;
+            select.appendChild(option);
+        });
+        select.value = "507";
+    }
+
+    function showScreen(screenName) { Object.values(screens).forEach(screen => screen.classList.add('hidden')); screens[screenName]?.classList.remove('hidden'); }
+    
+    function updateLanguage() { 
+        currentLang = supportedLangs[currentLangIndex];
+        const t = translations[currentLang]; 
+        document.querySelectorAll('[data-translate]').forEach(el => { const key = el.getAttribute('data-translate'); if (t[key]) el.textContent = t[key]; }); 
+        document.querySelectorAll('[data-translate-placeholder]').forEach(el => { const key = el.getAttribute('data-translate-placeholder'); if (t[key]) el.placeholder = t[key]; }); 
+        document.documentElement.lang = currentLang; 
+        
+        document.querySelectorAll('#langToggle').forEach(btn => {
+            btn.textContent = currentLang.toUpperCase();
+        });
+        populateDateSelects();
+    }
+
+    function showConfetti() { if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } }); }
+    function showLoader(loaderId, show = true) { const loader = document.getElementById(loaderId); loader.style.display = show ? 'flex' : 'none'; const button = loader.closest('.form-actions')?.querySelector('button'); if (button) button.style.display = show ? 'none' : 'block'; }
+    function showSuccess(title, detail, showConfettiAnimation = true) { document.getElementById('successTitle').textContent = title; document.getElementById('successDetail').textContent = detail; document.getElementById('successIcon').textContent = '🎉'; showScreen('success'); if (showConfettiAnimation) showConfetti(); }
+    function showError(detailKey) { const t = translations[currentLang]; document.getElementById('errorDetail').textContent = t[detailKey] || detailKey; showScreen('error'); }
+    async function submitData(formData, formElement) { const loaderId = formElement.id === 'regForm' ? 'registerLoader' : 'attendanceLoader'; showLoader(loaderId, true); if (!navigator.onLine) { saveForLater(formData, formElement); return; } try { const response = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(formData) }); const result = await response.json(); if (result.success || result.name) { const t = translations[currentLang]; let title, detail; const gender = result.gender || formData.genero; if (formData.action === 'register') { title = result.registered ? t.welcomeBackTitle : t.successTitle; detail = result.registered ? t.registrationWelcomeBack : t.registrationSuccess; } else { title = t.welcomeBackTitle; detail = t.attendanceSuccess; } detail = detail.replace('{name}', result.name); if (currentLang === 'es' && gender) { if (gender.toUpperCase() === 'M') { detail = detail.replace(/Bienvenido\/a|Bienvenida/g, 'Bienvenido'); } else if (gender.toUpperCase() === 'F') { detail = detail.replace(/Bienvenido\/a|Bienvenida/g, 'Bienvenida'); } } showSuccess(title, detail); } else { showError('attendanceError'); } } catch (error) { console.error("Submit Error:", error); showError('attendanceError'); } finally { showLoader(loaderId, false); formElement.reset(); } }
+    function saveForLater(formData, formElement) { const queue = JSON.parse(localStorage.getItem('offlineQueue')) || []; queue.push(formData); localStorage.setItem('offlineQueue', JSON.stringify(queue)); const loaderId = formElement.id === 'regForm' ? 'registerLoader' : 'attendanceLoader'; showLoader(loaderId, false); formElement.reset(); const t = translations[currentLang]; document.getElementById('successIcon').textContent = '💾'; showSuccess(t.offlineTitle, t.offlineDetail, false); }
+    async function processOfflineQueue() { const queue = JSON.parse(localStorage.getItem('offlineQueue')) || []; if (navigator.onLine && queue.length > 0) { console.log(`Processing ${queue.length} offline items...`); const submissions = queue.map(formData => fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(formData) }).catch(err => console.error('Failed to sync item:', err))); await Promise.all(submissions); localStorage.removeItem('offlineQueue'); console.log('Offline queue processed and cleared.'); } }
+    
+    function populateDateSelects() {
+        const daySelect = document.getElementById('birthDay');
+        const monthSelect = document.getElementById('birthMonth');
+        const yearSelect = document.getElementById('birthYear');
+        const t = translations[currentLang].dateSelects;
+        const currentDay = daySelect.value;
+        const currentMonth = monthSelect.value;
+        const currentYearVal = yearSelect.value;
+        yearSelect.innerHTML = `<option value="">${t.year}</option>`;
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= currentYear - 80; y--) { yearSelect.innerHTML += `<option value="${y}">${y}</option>`; }
+        monthSelect.innerHTML = `<option value="">${t.month}</option>`;
+        const monthNames = { es: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], zh: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], pt: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], ja: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], ko: ["1월", "2월", "3월", "4月", "5月", "6月", "7月", "8월", "9월", "10월", "11월", "12월"], de: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], ru: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"] }[currentLang];
+        monthNames.forEach((month, index) => { monthSelect.innerHTML += `<option value="${index + 1}">${month}</option>`; });
+        const year = parseInt(yearSelect.value, 10);
+        const month = parseInt(monthSelect.value, 10);
+        const daysInMonth = (year && month) ? new Date(year, month, 0).getDate() : 31;
+        daySelect.innerHTML = `<option value="">${t.day}</option>`;
+        for (let d = 1; d <= daysInMonth; d++) { daySelect.innerHTML += `<option value="${d}">${d}</option>`; }
+        if(currentYearVal) yearSelect.value = currentYearVal;
+        if(currentMonth) monthSelect.value = currentMonth;
+        if(currentDay) daySelect.value = currentDay;
+    }
+
+    function formatPhoneNumber(input, countryCode) {
+        if (input.value.toUpperCase() === 'N/A') return;
+        const country = countryCodes.find(c => c.code === countryCode);
+        if (!country || !country.format) { input.value = input.value.replace(/[^\d]/g, ''); return; }
+        const format = country.format;
+        const maxLength = format.reduce((a, b) => a + b, 0);
+        let digits = input.value.replace(/\D/g, '');
+        if (digits.length > maxLength) { digits = digits.slice(0, maxLength); }
+        const parts = [];
+        let start = 0;
+        for (const len of format) { const part = digits.slice(start, start + len); if (part.length > 0) { parts.push(part); start += len; } else { break; } }
+        input.value = parts.join('-');
+    }
+    
+    // --- Lógica para checkboxes personalizados y condicionales ---
+    const baptismQuestion = document.getElementById('baptismQuestion');
+    const jesusYes = document.getElementById('jesus-yes');
+    const jesusNo = document.getElementById('jesus-no');
+    const baptismYes = document.getElementById('baptism-yes');
+    const baptismNo = document.getElementById('baptism-no');
+
+    function setupCheckboxGroup(yesCheckbox, noCheckbox) {
+        yesCheckbox.addEventListener('change', () => { if (yesCheckbox.checked) noCheckbox.checked = false; });
+        noCheckbox.addEventListener('change', () => { if (noCheckbox.checked) yesCheckbox.checked = false; });
+    }
+    setupCheckboxGroup(jesusYes, jesusNo);
+    setupCheckboxGroup(baptismYes, baptismNo);
+
+    [jesusYes, jesusNo].forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            if (jesusYes.checked) {
+                baptismQuestion.classList.remove('hidden');
+            } else {
+                baptismQuestion.classList.add('hidden');
+                baptismYes.checked = false;
+                baptismNo.checked = false;
+            }
+        });
+    });
+
+    document.getElementById('birthMonth').addEventListener('change', populateDateSelects);
+    document.getElementById('birthYear').addEventListener('change', populateDateSelects);
+    document.body.addEventListener('click', (e) => { if (e.target.closest('#langToggle')) { currentLangIndex = (currentLangIndex + 1) % supportedLangs.length; updateLanguage(); } });
+    ['yesBtn', 'noBtn', 'backFromRegister', 'backFromAttendance', 'backToWelcome', 'backToWelcomeError'].forEach(id => { document.getElementById(id).addEventListener('click', (e) => { e.preventDefault(); switch(id) { case 'yesBtn': showScreen('registration'); break; case 'noBtn': showScreen('attendance'); break; default: showScreen('welcome'); processOfflineQueue(); break; } }); });
+    document.getElementById('naBtnInvitedBy').addEventListener('click', () => { document.getElementById('invitedBy').value = 'N/A'; });
+    document.getElementById('naBtnPhone').addEventListener('click', () => { document.getElementById('phone').value = 'N/A'; });
+    document.getElementById('phone').addEventListener('input', (e) => { formatPhoneNumber(e.target, document.getElementById('countryCode').value); });
+    document.getElementById('countryCode').addEventListener('change', () => { formatPhoneNumber(document.getElementById('phone'), document.getElementById('countryCode').value); });
+    document.getElementById('phoneCheck').addEventListener('input', (e) => { formatPhoneNumber(e.target, document.getElementById('countryCodeCheck').value); });
+    document.getElementById('countryCodeCheck').addEventListener('change', () => { formatPhoneNumber(document.getElementById('phoneCheck'), document.getElementById('countryCodeCheck').value); });
+
+    document.getElementById('regForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const day = document.getElementById('birthDay').value, month = document.getElementById('birthMonth').value, year = document.getElementById('birthYear').value;
+        if (!day || !month || !year) { showError("Por favor, selecciona una fecha de nacimiento completa."); return; }
+        const birthDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const userEnteredAge = parseInt(document.getElementById('age').value, 10);
+        
+        // --- INICIO: LÓGICA DE VALIDACIÓN DE EDAD CORREGIDA ---
+        const birthDate = new Date(year, month - 1, day); // Se usa el constructor con números para evitar problemas de UTC/zona horaria
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { // Condición estándar para verificar si ya pasó el cumpleaños este año
+            calculatedAge--;
+        }
+        if (calculatedAge !== userEnteredAge) {
+            showError('ageMismatchError');
+            return;
+        }
+        // --- FIN: LÓGICA DE VALIDACIÓN DE EDAD CORREGIDA ---
+        
+        // --- Validación de checkboxes ---
+        if (!jesusYes.checked && !jesusNo.checked) { showError('validationError'); return; }
+        if (jesusYes.checked && !baptismYes.checked && !baptismNo.checked) { showError('validationError'); return; }
+
+        const genderSelect = document.getElementById('gender');
+        const t = translations[currentLang];
+        const jesusAnswer = jesusYes.checked ? 'Si' : 'No';
+        const baptismAnswer = jesusYes.checked ? (baptismYes.checked ? 'Si' : 'No') : 'N/A';
+
+        pendingRegistrationData = {
+            action: 'register',
+            invitadoPor: document.getElementById('invitedBy').value,
+            nombreApellido: document.getElementById('fullName').value,
+            genero: genderSelect.value,
+            telefono: document.getElementById('phone').value,
+            fechaNacimiento: birthDateStr,
+            edad: document.getElementById('age').value,
+            aceptoJesus: jesusAnswer,
+            bautizado: baptismAnswer
+        };
+        
+        document.getElementById('confirmInvitedBy').textContent = pendingRegistrationData.invitadoPor;
+        document.getElementById('confirmName').textContent = pendingRegistrationData.nombreApellido;
+        document.getElementById('confirmGender').textContent = genderSelect.options[genderSelect.selectedIndex].text;
+        document.getElementById('confirmPhone').textContent = pendingRegistrationData.telefono;
+        document.getElementById('confirmBirthDate').textContent = `${day}/${month}/${year}`;
+        document.getElementById('confirmAge').textContent = pendingRegistrationData.edad;
+        document.getElementById('confirmJesus').textContent = pendingRegistrationData.aceptoJesus === 'Si' ? t.optionYes : t.optionNo;
+        const confirmBaptismRow = document.getElementById('confirmBaptismRow');
+        if (pendingRegistrationData.aceptoJesus === 'Si') {
+            document.getElementById('confirmBaptism').textContent = pendingRegistrationData.bautizado === 'Si' ? t.optionYes : t.optionNo;
+            confirmBaptismRow.style.display = 'flex';
+        } else {
+            confirmBaptismRow.style.display = 'none';
+        }
+        showScreen('confirmation');
+    });
+
+    document.getElementById('confirmYesBtn').addEventListener('click', () => { if (pendingRegistrationData) { showScreen('registration'); submitData(pendingRegistrationData, document.getElementById('regForm')); pendingRegistrationData = null; } });
+    document.getElementById('confirmNoBtn').addEventListener('click', () => { showScreen('registration'); });
+    document.getElementById('attForm').addEventListener('submit', (e) => { e.preventDefault(); submitData({ action: 'attendance', nombreApellido: document.getElementById('fullNameCheck').value, telefono: document.getElementById('phoneCheck').value }, e.target); });
+    
+    window.addEventListener('online', processOfflineQueue);
+    populateCountryCodes('countryCode');
+    populateCountryCodes('countryCodeCheck');
+    populateDateSelects();
+    updateLanguage();
+    showScreen('welcome');
+    processOfflineQueue();
+</script>
+</body>
+</html>
